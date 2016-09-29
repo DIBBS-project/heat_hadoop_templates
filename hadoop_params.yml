@@ -69,41 +69,6 @@ resources:
                 repair_permissions
                 install_hadoop cc $master_name $master_name
 
-                # # Configure Yarn Hadoop
-                # cat > yarn-site.xml <<- EOM
-                # <configuration>
-                #   <property>
-                #     <name>yarn.resourcemanager.webapp.address</name>
-                #     <value>0.0.0.0:8088</value>
-                #   </property>
-                #   <property>
-                #     <name>yarn.nodemanager.aux-services</name>
-                #     <value>mapreduce_shuffle</value>
-                #   </property>
-                #   <property>
-                #     <name>yarn.nodemanager.vmem-check-enabled</name>
-                #     <value>false</value>
-                #   </property>
-                #   <property>
-                #     <name>yarn.resourcemanager.hostname</name>
-                #     <value>$master_name</value>
-                #   </property>
-                #   <property>
-                #     <name>yarn.resourcemanager.address</name>
-                #     <value>$master_name:8032</value>
-                #   </property>
-                #   <property>
-                #     <name>yarn.resourcemanager.scheduler.address</name>
-                #     <value>$master_name:8030</value>
-                #   </property>
-                #   <property>
-                #     <name>yarn.resourcemanager.resource-tracker.address</name>
-                #     <value>$master_name:8031</value>
-                #   </property>
-                # </configuration>
-                # EOM
-                # sudo cp yarn-site.xml /usr/hadoop/hadoop/etc/hadoop/yarn-site.xml
-
                 echo "Starting Hadoop services"
                 bash /usr/hadoop/start_hadoop.sh
                 echo "done"
@@ -113,8 +78,6 @@ resources:
                 $username: { get_param: user_name }
                 $node_name: MyHadoopClusterMaster
                 $master_name: MyHadoopClusterMaster
-                # node_name: { get_attr: [hadoop_master_server, name] }
-                # master_name: { get_attr: [hadoop_master_server, name] }
      
   hadoop_master_server_association:
     type: OS::Nova::FloatingIPAssociation
@@ -130,7 +93,6 @@ resources:
         type: OS::Nova::Server
         properties:
           name: MyHadoopClusterSlave%index%
-          #name: MyHadoopCluster3
           flavor: baremetal
           image: { get_param: image_name }
           key_name: { get_param: key_name }
@@ -184,89 +146,9 @@ resources:
                         repair_permissions
                         install_hadoop cc $master_name $node_name
 
-                        # # Configure Yarn Hadoop
-                        # cat > yarn-site.xml <<- EOM
-                        # <configuration>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.webapp.address</name>
-                        #     <value>0.0.0.0:8088</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.nodemanager.aux-services</name>
-                        #     <value>mapreduce_shuffle</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.nodemanager.vmem-check-enabled</name>
-                        #     <value>false</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.hostname</name>
-                        #     <value>$master_name</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.address</name>
-                        #     <value>$master_name:8032</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.scheduler.address</name>
-                        #     <value>$master_name:8030</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.resource-tracker.address</name>
-                        #     <value>$master_name:8031</value>
-                        #   </property>
-                        # </configuration>
-                        # EOM
-                        # sudo cp yarn-site.xml /usr/hadoop/hadoop/etc/hadoop/yarn-site.xml
-
-                        # echo "Slave is preparing configuration files"
-                        # # Configure Hadoop
-                        # cat > core-site.xml <<- EOM
-                        # <configuration>
-                        # <property>
-                        #   <name>fs.default.name</name>
-                        #     <value>hdfs://$master_name:9000</value>
-                        # </property>
-                        # </configuration>
-                        # EOM
-                        # sudo cp core-site.xml /usr/hadoop/hadoop/etc/hadoop/core-site.xml
-
-                        # # Configure Yarn Hadoop
-                        # cat > yarn-site.xml <<- EOM
-                        # <configuration>
-                        #   <property>
-                        #     <name>yarn.nodemanager.aux-services</name>
-                        #     <value>mapreduce_shuffle</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.nodemanager.vmem-check-enabled</name>
-                        #     <value>false</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.hostname</name>
-                        #     <value>$master_name</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.address</name>
-                        #     <value>$master_name:8032</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.scheduler.address</name>
-                        #     <value>$master_name:8030</value>
-                        #   </property>
-                        #   <property>
-                        #     <name>yarn.resourcemanager.resource-tracker.address</name>
-                        #     <value>$master_name:8031</value>
-                        #   </property>
-                        # </configuration>
-                        # EOM
-                        # sudo cp yarn-site.xml /usr/hadoop/hadoop/etc/hadoop/yarn-site.xml
-
                         # Configure hadoop node
                         sudo echo "$node_name" > /usr/hadoop/hadoop/etc/hadoop/slaves
                         sudo echo "$master_name" > /usr/hadoop/hadoop/etc/hadoop/masters
-
-                        # scp hadoop/etc/hadoop/slaves $master_name:/usr/hadoop/hadoop/etc/hadoop/slaves
 
                         echo "Cleaning running hadoop services"
                         pkill -f 'java -jar' || true

@@ -116,7 +116,6 @@ EOM
 
 EOM
 
-    if [ "$HADOOP_MASTER_NAME" == "$HADOOP_NODE_NAME" ]; then
         cat > yarn-site.xml <<- EOM
 <configuration>
   <property>
@@ -149,36 +148,6 @@ EOM
   </property>
 </configuration>
 EOM
-    else
-        cat > yarn-site.xml <<- EOM
-<configuration>
-  <property>
-    <name>yarn.nodemanager.aux-services</name>
-    <value>mapreduce_shuffle</value>
-  </property>
-  <property>
-    <name>yarn.nodemanager.vmem-check-enabled</name>
-    <value>false</value>
-  </property>
-  <property>
-    <name>yarn.resourcemanager.hostname</name>
-    <value>$HADOOP_MASTER_NAME</value>
-  </property>
-  <property>
-    <name>yarn.resourcemanager.address</name>
-    <value>$HADOOP_MASTER_NAME:8032</value>
-  </property>
-  <property>
-    <name>yarn.resourcemanager.scheduler.address</name>
-    <value>$HADOOP_MASTER_NAME:8030</value>
-  </property>
-  <property>
-    <name>yarn.resourcemanager.resource-tracker.address</name>
-    <value>$HADOOP_MASTER_NAME:8031</value>
-  </property>
-</configuration>
-EOM
-    fi
 
     if [ "$HADOOP_MASTER_NAME" == "$HADOOP_NODE_NAME" ]; then
        # Format namenode
