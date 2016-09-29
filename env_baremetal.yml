@@ -1,0 +1,8 @@
+parameters:
+  cluster_size: 3
+  image_name: CENTOS-7-HADOOP
+  key_name: MySshKey
+  reservation_id: 770b99b7-35c8-4490-8384-a81f3412d7f7
+  user_name: cc
+  flavor_name: baremetal
+  network_name: sharednet1
