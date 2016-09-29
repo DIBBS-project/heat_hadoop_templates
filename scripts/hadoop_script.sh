@@ -57,8 +57,9 @@ EOM
     sudo cp environment /etc/environment
     source /etc/environment
 
-    echo "source /etc/environment" >> /home/$HADOOP_USERNAME/.bashrc
-    sudo cp /home/$HADOOP_USERNAME/.bashrc /root/.bashrc
+    HADOOP_USER_HOME_PATH=$(eval echo ~$HADOOP_USERNAME)
+    echo "source /etc/environment" >> $HADOOP_USER_HOME_PATH/.bashrc
+    sudo cp $HADOOP_USER_HOME_PATH/.bashrc /root/.bashrc || true
 
     cd hadoop/etc/hadoop
 
