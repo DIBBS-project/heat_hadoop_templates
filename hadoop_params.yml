@@ -63,7 +63,7 @@ resources:
 
                 sudo yum install -y java screen
 
-                curl http://dropbox.jonathanpastor.fr/hadoop_script.sh > hadoop_script.sh
+                curl https://raw.githubusercontent.com/DIBBS-project/heat_hadoop_templates/master/scripts/hadoop_script.sh > hadoop_script.sh
                 source hadoop_script.sh
 
                 clean_hadoop
@@ -141,7 +141,7 @@ resources:
 
                         sudo yum install -y java screen
 
-                        curl http://dropbox.jonathanpastor.fr/hadoop_script.sh > hadoop_script.sh
+                        curl https://raw.githubusercontent.com/DIBBS-project/heat_hadoop_templates/master/scripts/hadoop_script.sh > hadoop_script.sh
                         source hadoop_script.sh
 
                         clean_hadoop
