@@ -2,7 +2,8 @@
 description: Hadoop clusters deployed with Heat on Chameleon
 
 # This defines the minimum Heat version required by this template.
-heat_template_version: 2015-10-15
+# heat_template_version: 2015-10-15
+heat_template_version: 2015-04-30
 
 # The resources section defines what OpenStack resources are to be deployed and
 # how they should be configured.
@@ -16,11 +17,11 @@ resources:
     type: OS::Nova::Server
     properties:
       name: MyHadoopClusterMaster
-      flavor: baremetal
+      flavor: { get_param: flavor_name }
       image: { get_param: image_name }
       key_name: { get_param: key_name }
       networks:
-         - network: sharednet1
+         - network: { get_param: network_name }
       scheduler_hints: { reservation: { get_param: reservation_id } }
       user_data:
         str_replace:
@@ -67,7 +68,7 @@ resources:
 
                 clean_hadoop
                 repair_permissions
-                install_hadoop cc $master_name $master_name
+                install_hadoop $username $master_name $master_name
 
                 echo "Starting Hadoop services"
                 bash /usr/hadoop/start_hadoop.sh
@@ -87,17 +88,18 @@ resources:
 
   hadoop_slaves:
     type: OS::Heat::ResourceGroup
+    depends_on: [ hadoop_master_server ]
     properties:
       count: { get_param: cluster_size }
       resource_def:
         type: OS::Nova::Server
         properties:
           name: MyHadoopClusterSlave%index%
-          flavor: baremetal
+          flavor: { get_param: flavor_name }
           image: { get_param: image_name }
           key_name: { get_param: key_name }
           networks:
-             - network: sharednet1
+             - network: { get_param: network_name }
           scheduler_hints: { reservation: { get_param: reservation_id } }
           user_data:
                 str_replace:
@@ -144,7 +146,7 @@ resources:
 
                         clean_hadoop
                         repair_permissions
-                        install_hadoop cc $master_name $node_name
+                        install_hadoop $username $master_name $node_name
 
                         # Configure hadoop node
                         sudo echo "$node_name" > /usr/hadoop/hadoop/etc/hadoop/slaves
@@ -201,6 +203,18 @@ parameters:
   reservation_id:
     type: string
     description: ID of the Blazar reservation to use for launching instances.
-    constraints:
-    - custom_constraint: blazar.reservation
+    # constraints:
+    # - custom_constraint: blazar.reservation
     default: d5d0c000-d38d-4140-a37c-612a73c755d5
+  flavor_name:
+    type: string
+    description: Name of the flavor used for the instances.
+    constraints:
+    - custom_constraint: nova.flavor
+    default: baremetal
+  network_name:
+    type: string
+    description: Name of the network used for the instances.
+    constraints:
+    - custom_constraint: neutron.network
+    default: sharednet1
