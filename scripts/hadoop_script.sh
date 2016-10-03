@@ -174,7 +174,7 @@ bash \$HADOOP_HOME/sbin/yarn-daemon.sh start nodemanager
 EOM
     fi
 
-    screen -dm bash start_hadoop.sh
+    #screen -dm bash start_hadoop.sh
 
     cat > reload.sh <<- EOM
 #!/bin/bash
