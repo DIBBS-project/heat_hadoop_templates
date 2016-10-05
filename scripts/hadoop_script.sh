@@ -55,6 +55,7 @@ export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk/
 EOM
 
     sudo cp environment /etc/environment
+    sudo cp /etc/environment /etc/bashrc
     source /etc/environment
 
     HADOOP_USER_HOME_PATH=$(eval echo ~$HADOOP_USERNAME)
