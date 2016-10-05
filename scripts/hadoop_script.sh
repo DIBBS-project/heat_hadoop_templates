@@ -57,6 +57,9 @@ EOM
     sudo cp environment /etc/environment
     sudo cp /etc/environment /etc/bashrc
     source /etc/environment
+    
+    # Change secure_path variable
+    sed -i "s@secure_path.*@secure_path=\"${PATH}\"@g" /etc/sudoers
 
     HADOOP_USER_HOME_PATH=$(eval echo ~$HADOOP_USERNAME)
     echo "source /etc/environment" >> $HADOOP_USER_HOME_PATH/.bashrc
