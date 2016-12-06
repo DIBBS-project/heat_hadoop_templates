@@ -42,7 +42,11 @@ resources:
                 chmod 755 /var/nfs
                 echo "/var/nfs $NETWORK_ADDRESS/22(rw,async) $NETWORK_ADDRESS/23(rw,async) $NETWORK_ADDRESS/24(rw,async)" > /etc/exports
                 exportfs -a
-                
+
+                # Start a daemon that will synchronise hosts file (master)
+                curl https://raw.githubusercontent.com/DIBBS-project/heat_hadoop_templates/master/scripts/synchronize_hosts_file_master.sh > synchronize_hosts_file_master.sh
+                screen -dm bash synchronize_hosts_file_master.sh
+
                 # Configure SSH to accept a new key
                 mkdir -p .ssh
                 pushd .ssh
@@ -94,10 +98,6 @@ resources:
                 # Send IP adress to master node
                 curl --data "hostname=$node_name&ip=$IP_ADDRESS" http://127.0.0.1:8012/add_to_host_file/
 
-                # Start a daemon that will synchronise hosts file (master)
-                curl https://raw.githubusercontent.com/DIBBS-project/heat_hadoop_templates/master/scripts/synchronize_hosts_file_master.sh > synchronize_hosts_file_master.sh
-                screen -dm bash synchronize_hosts_file_master.sh
-
             params:
                 $username: { get_param: user_name }
                 $node_name: MyHadoopClusterMaster
@@ -138,7 +138,11 @@ resources:
                         # Start and configure NFS client
                         mkdir -p /mnt/nfs/var/nfs
                         mount $master_ip:/var/nfs /mnt/nfs/var/nfs -v
-                      
+
+                        # Start a daemon that will synchronise hosts file (slave)
+                        curl https://raw.githubusercontent.com/DIBBS-project/heat_hadoop_templates/master/scripts/synchronize_hosts_file_slave.sh > synchronize_hosts_file_slave.sh
+                        screen -dm bash synchronize_hosts_file_slave.sh
+
                         # Configure SSH to accept a new key
                         mkdir -p .ssh
                         pushd .ssh
@@ -209,9 +213,6 @@ resources:
                         # Send IP adress to master node
                         curl --data "hostname=$node_name&ip=$IP_ADDRESS" http://$master_ip:8012/add_to_host_file/
 
-                        # Start a daemon that will synchronise hosts file (slave)
-                        curl https://raw.githubusercontent.com/DIBBS-project/heat_hadoop_templates/master/scripts/synchronize_hosts_file_slave.sh > synchronize_hosts_file_slave.sh
-                        screen -dm bash synchronize_hosts_file_slave.sh    
                     params:
                         $username: { get_param: user_name }
                         $node_name: MyHadoopClusterSlave%index%
